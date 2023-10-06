@@ -13,9 +13,13 @@ export const UserValidation = z.object({
     .min(3, { message: "Minimum 3 characters accepts." })
     .max(30, { message: "Maximum 30 characters allowed." }),
   bio: z.string().max(160, { message: "Maximum 50 characters allowed" }),
-  location: z.string().max(30, { message: "Maximum 30 characters allowed." }),
+  location: z
+    .string()
+    .max(30, { message: "Maximum 30 characters allowed." })
+    .optional(),
   website: z
     .string()
     .url()
-    .max(100, { message: "Maximum 30 characters allowed." }),
+    .max(100, { message: "Maximum 30 characters allowed." })
+    .optional(),
 });

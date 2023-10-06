@@ -6,6 +6,7 @@ import { ChangeEvent, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TbCameraPlus } from "react-icons/tb";
 import { isBase64Image } from "@/lib/utils";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useUploadThing } from "@/lib/uploadthing";
 
@@ -24,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 
 import { UserValidation } from "@/lib/validations/user";
+import { updateUser } from "@/lib/actions/user.actions";
 
 interface Props {
   user: {
@@ -44,6 +46,9 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   const [fileprofile, setfileprofile] = useState<File[]>([]);
   const [filebanner, setfilebanner] = useState<File[]>([]);
   const { startUpload } = useUploadThing("media");
+  const router = useRouter();
+  const pathname = usePathname();
+
   const form = useForm<z.infer<typeof UserValidation>>({
     resolver: zodResolver(UserValidation),
     defaultValues: {
@@ -53,13 +58,14 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       name: user.name || "",
       bio: user.bio || "",
       location: user.location || "",
-      website: user.website || "",
+      website: user.website,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof UserValidation>) => {
     const profileBlob = values.profile;
     const bannerBlob = values.banner;
+    console.log("testing......");
 
     // Check if the profile image is a valid base64 image
     const isProfileImageValid = isBase64Image(profileBlob);
@@ -85,8 +91,23 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       }
     }
 
-    // Now you can submit the form data with the updated image URLs
-    // ...
+    await updateUser({
+      userId: user.id,
+      username: values.username,
+      name: values.name,
+      bio: values.bio,
+      location: values.location,
+      profile: values.profile,
+      banner: values.banner,
+      website: values.website,
+      path: pathname,
+    });
+
+    if (pathname === "/profile/edit") {
+      router.back();
+    } else {
+      router.push("/");
+    }
   };
   const handleBannerImage = (
     e: ChangeEvent<HTMLInputElement>,
@@ -128,7 +149,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     }
   };
   return (
-    <div className="bg-white md:rounded-lg shadow-lg md:w-[650px] w-full md:h-[700px] h-screen overflow-y-auto relative ">
+    <div className="bg-white md:rounded-lg shadow-lg md:w-[650px] w-full md:h-[700px] h-screen overflow-y-auto overflow-x-hidden relative ">
       <h1 className="text-light-2 sticky top-0 left-0 w-full p-4 bg-dark-1 z-30 mt-0 bg-opacity-90">
         Edit Profile
       </h1>
@@ -148,10 +169,10 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                       <Image
                         src={field.value}
                         alt="header_photo"
-                        layout="fill"
-                        objectFit="cover"
-                        priority
-                        className=""
+                        fill
+                        style={{
+                          objectFit: "cover",
+                        }}
                       />
                     </div>
                   ) : (
@@ -159,15 +180,17 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                       <Image
                         src="/assets/banner.png"
                         alt="profile_icon"
-                        layout="fill"
-                        objectFit="cover"
+                        fill
+                        style={{
+                          objectFit: "cover",
+                        }}
                         className=""
                       />
                     </div>
                   )}
                 </FormLabel>
                 <FormControl className="">
-                  <Label>
+                  <>
                     <Input
                       type="file"
                       accept="image/*"
@@ -179,7 +202,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                       className="absolute top-1/2 left-1/2 transform tansform -translate-x-1/2 -translate-y-1/2 text-xl text-light-1 bg-dark-1 bg-opacity-40 hover:bg-opacity-20 rounded-full p-3 cursor-pointer"
                       size={48}
                     />
-                  </Label>
+                  </>
                 </FormControl>
               </FormItem>
             )}
@@ -195,8 +218,10 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                       <Image
                         src={field.value}
                         alt="profile_icon"
-                        layout="fill"
-                        objectFit="cover"
+                        fill
+                        style={{
+                          objectFit: "cover",
+                        }}
                         className="rounded-full border-4 border-dark-4"
                       />
                     </div>
@@ -205,15 +230,17 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                       <Image
                         src={field.value}
                         alt="profile_icon"
-                        layout="fill"
-                        objectFit="cover"
+                        fill
+                        style={{
+                          objectFit: "cover",
+                        }}
                         className="rounded-full border-4 border-dark-4"
                       />
                     </div>
                   )}
                 </FormLabel>
                 <FormControl className="">
-                  <Label>
+                  <>
                     <Input
                       type="file"
                       accept="image/*"
@@ -225,7 +252,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                       className="absolute top-10 left-16 text-xl text-light-1 bg-dark-1 bg-opacity-40 hover:bg-opacity-20 rounded-full p-3 cursor-pointer"
                       size={48}
                     />
-                  </Label>
+                  </>
                 </FormControl>
               </FormItem>
             )}
