@@ -13,6 +13,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,7 +23,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 
 import { UserValidation } from "@/lib/validations/user";
 import { updateUser } from "@/lib/actions/user.actions";
@@ -65,7 +65,6 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   const onSubmit = async (values: z.infer<typeof UserValidation>) => {
     const profileBlob = values.profile;
     const bannerBlob = values.banner;
-    console.log("testing......");
 
     // Check if the profile image is a valid base64 image
     const isProfileImageValid = isBase64Image(profileBlob);
@@ -162,7 +161,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             control={form.control}
             name="banner"
             render={({ field }) => (
-              <FormItem className="border-2 border-dark-1 px-0 relative ">
+              <FormItem className="border-2 border-dark-1 px-0 relative">
                 <FormLabel className="">
                   {field.value ? (
                     <div className="w-[750px] h-[250px] relative overflow-hidden">
@@ -190,20 +189,20 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   )}
                 </FormLabel>
                 <FormControl className="">
-                  <>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      placeholder="upload a profile photo"
-                      className="hidden"
-                      onChange={(e) => handleBannerImage(e, field.onChange)}
-                    />
-                    <TbCameraPlus
-                      className="absolute top-1/2 left-1/2 transform tansform -translate-x-1/2 -translate-y-1/2 text-xl text-light-1 bg-dark-1 bg-opacity-40 hover:bg-opacity-20 rounded-full p-3 cursor-pointer"
-                      size={48}
-                    />
-                  </>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    placeholder="upload a profile photo"
+                    className="hidden"
+                    onChange={(e) => handleBannerImage(e, field.onChange)}
+                  />
                 </FormControl>
+                <FormDescription>
+                  <TbCameraPlus
+                    className="absolute top-1/2 left-1/2 transform tansform -translate-x-1/2 -translate-y-1/2 text-xl text-light-1 bg-dark-1 bg-opacity-40 hover:bg-opacity-20 rounded-full p-3 cursor-pointer"
+                    size={48}
+                  />
+                </FormDescription>
               </FormItem>
             )}
           />
@@ -240,20 +239,20 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   )}
                 </FormLabel>
                 <FormControl className="">
-                  <>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      placeholder="Add profile photo"
-                      className="hidden"
-                      onChange={(e) => handleProfileImage(e, field.onChange)}
-                    />
-                    <TbCameraPlus
-                      className="absolute top-10 left-16 text-xl text-light-1 bg-dark-1 bg-opacity-40 hover:bg-opacity-20 rounded-full p-3 cursor-pointer"
-                      size={48}
-                    />
-                  </>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    placeholder=""
+                    className="hidden"
+                    onChange={(e) => handleProfileImage(e, field.onChange)}
+                  />
                 </FormControl>
+                <FormDescription>
+                  <TbCameraPlus
+                    className="absolute top-10 left-16 text-xl text-light-1 bg-dark-1 bg-opacity-40 hover:bg-opacity-20 rounded-full p-3 cursor-pointer"
+                    size={48}
+                  />
+                </FormDescription>
               </FormItem>
             )}
           />
