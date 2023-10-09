@@ -4,7 +4,7 @@ import React from "react";
 const Explore = () => {
   return (
     <>
-      <Header showBackArrow label="Explore" />
+      <Header showBackArrow label="Explore" isBorder />
       <div>Explore</div>
     </>
   );

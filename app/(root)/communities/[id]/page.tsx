@@ -4,7 +4,7 @@ import React from "react";
 const Communities = () => {
   return (
     <>
-      <Header showBackArrow label="Communities" />
+      <Header showBackArrow label="Communities" isBorder />
       <div>Communities</div>;
     </>
   );

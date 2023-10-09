@@ -11,6 +11,7 @@ import Logo from "./Logo";
 import { useUser } from "@clerk/nextjs";
 import { useClerk } from "@clerk/clerk-react";
 import BlackTriangle from "./BlackTraingle";
+import Feather from "./Feather";
 
 const LeftSidebar = () => {
   const [isToggle, setToggle] = useState(false);
@@ -67,16 +68,10 @@ const LeftSidebar = () => {
             <div className="bg-primary-1 hover:bg-primary-2 text-center font-semibold text-lg cursor-pointer rounded-full leading-9 py-2 max-lg:hidden">
               Post
             </div>
-            <div className="bg-primary-1  hover:bg-primary-2 rounded-full flex items-center justify-center h-12 w-12 lg:hidden">
-              <Image
-                src="assets/compose.svg"
-                alt="compose"
-                width={40}
-                height={40}
-                className="custom-svg-logo rounded-full"
-              />
-            </div>
           </Link>
+          <div className="bg-primary-1  hover:bg-primary-2 rounded-full flex items-center justify-center h-12 w-12 lg:hidden">
+            <Feather />
+          </div>
         </div>
 
         {isSignedIn && isLoaded && (

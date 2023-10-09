@@ -6,9 +6,10 @@ import { BiArrowBack } from "react-icons/bi";
 interface HeaderProps {
   showBackArrow?: boolean;
   label: string;
+  isBorder?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ showBackArrow, label }) => {
+const Header: React.FC<HeaderProps> = ({ showBackArrow, label, isBorder }) => {
   const router = useRouter();
 
   const handleBack = useCallback(() => {
@@ -16,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({ showBackArrow, label }) => {
   }, [router]);
 
   return (
-    <div className="border-b-2 border-b-dark-2 p-3">
+    <div className={`${isBorder && "border-b-2 border-b-dark-2"} p-3`}>
       <div className="flex flex-row items-center gap-3">
         {showBackArrow && (
           <BiArrowBack

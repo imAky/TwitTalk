@@ -11,6 +11,7 @@ import Logo from "./Logo";
 import { useUser } from "@clerk/nextjs";
 import { useClerk } from "@clerk/clerk-react";
 import BlackTriangle from "./BlackTraingle";
+import Feather from "./Feather";
 
 const Bottombar = () => {
   const [isToggle, setToggle] = useState(false);
@@ -55,13 +56,7 @@ const Bottombar = () => {
         <div className="sm:hidden absolute bottom-20 right-8">
           <Link href="/compose/tweet">
             <div className="bg-primary-1  hover:bg-primary-2 rounded-full flex items-center justify-center h-12 w-12">
-              <Image
-                src="assets/compose.svg"
-                alt="compose"
-                width={40}
-                height={40}
-                className="custom-svg-logo rounded-full"
-              />
+              <Feather />
             </div>
           </Link>
         </div>
