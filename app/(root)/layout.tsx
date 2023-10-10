@@ -34,7 +34,6 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <Topbar />
         <body className={`${roboto.variable} font-robo bg-dark-1 text-light-1`}>
           <main className="flex flex-row ">
             <LeftSidebar />

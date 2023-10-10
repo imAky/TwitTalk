@@ -2,7 +2,7 @@
 import * as z from "zod";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TbCameraPlus } from "react-icons/tb";
 import { isBase64Image } from "@/lib/utils";
@@ -45,6 +45,8 @@ interface Props {
 const AccountProfile = ({ user, btnTitle }: Props) => {
   const [fileprofile, setfileprofile] = useState<File[]>([]);
   const [filebanner, setfilebanner] = useState<File[]>([]);
+  const bannerInputRef = useRef<HTMLInputElement | null>(null);
+  const profileInputRef = useRef<HTMLInputElement | null>(null);
   const { startUpload } = useUploadThing("media");
   const router = useRouter();
   const pathname = usePathname();
@@ -190,9 +192,10 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                 </FormLabel>
                 <FormControl className="">
                   <Input
+                    ref={bannerInputRef}
                     type="file"
                     accept="image/*"
-                    placeholder="upload a profile photo"
+                    placeholder="upload a banner photo"
                     className="hidden"
                     onChange={(e) => handleBannerImage(e, field.onChange)}
                   />
@@ -201,6 +204,11 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   <TbCameraPlus
                     className="absolute top-1/2 left-1/2 transform tansform -translate-x-1/2 -translate-y-1/2 text-xl text-light-1 bg-dark-1 bg-opacity-40 hover:bg-opacity-20 rounded-full p-3 cursor-pointer"
                     size={48}
+                    onClick={() => {
+                      if (bannerInputRef.current) {
+                        bannerInputRef.current.click();
+                      }
+                    }}
                   />
                 </FormDescription>
               </FormItem>
@@ -240,6 +248,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                 </FormLabel>
                 <FormControl className="">
                   <Input
+                    ref={profileInputRef}
                     type="file"
                     accept="image/*"
                     placeholder=""
@@ -251,6 +260,11 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   <TbCameraPlus
                     className="absolute top-10 left-16 text-xl text-light-1 bg-dark-1 bg-opacity-40 hover:bg-opacity-20 rounded-full p-3 cursor-pointer"
                     size={48}
+                    onClick={() => {
+                      if (profileInputRef.current) {
+                        profileInputRef.current.click();
+                      }
+                    }}
                   />
                 </FormDescription>
               </FormItem>

@@ -1,11 +1,11 @@
 import * as z from "zod";
 
 export const TweetValidation = z.object({
-  tweet: z
+  twit: z
     .string()
     .nonempty()
-    .min(3, { message: "Tweet should be at least 3 character." })
-    .max(1000, { message: "Maximum 1000 characters allowed" }),
+    .min(1, { message: "Tweet should be at least 1 character." })
+    .max(300, { message: "Maximum 300 characters allowed" }),
   accountId: z.string().nonempty(),
   postImg: z.string().url().optional(),
 });

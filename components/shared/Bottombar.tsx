@@ -38,7 +38,10 @@ const Bottombar = () => {
               link.route = `${link.route}/${userId}`;
 
             return (
-              <div className="hover:bg-dark-4 hover:rounded-full transition-all duration-300">
+              <div
+                className="hover:bg-dark-4 hover:rounded-full transition-all duration-300"
+                key={link.label}
+              >
                 <div className="py-4 px-4 ">
                   <Link
                     href={link.route}

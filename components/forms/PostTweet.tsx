@@ -3,10 +3,13 @@ import * as z from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useId, useState } from "react";
 import { BsArrowLeft } from "react-icons/bs";
+import { TbPhoto } from "react-icons/tb";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { useRef } from "react";
+import { useUploadThing } from "@/lib/uploadthing";
 import {
   Form,
   FormControl,
@@ -21,10 +24,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
-import { TweetValidation } from "@/lib/validations/tweet";
+import { TweetValidation } from "@/lib/validations/twit";
 
 import { BiArrowBack } from "react-icons/bi";
 import TextareaAutosize from "./TextareaAutosize";
+import { isBase64Image } from "@/lib/utils";
+import { createTwit } from "@/lib/actions/twit.actions";
 
 interface Props {
   userId: string;
@@ -32,18 +37,44 @@ interface Props {
 
 function PostTweet({ userId }: Props) {
   const [postImage, setPostImage] = useState<File[]>();
+  const PostInputRef = useRef<HTMLInputElement | null>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+  const { startUpload } = useUploadThing("media");
   const { user, isLoaded } = useUser();
   const userImage = user?.imageUrl;
   const form = useForm<z.infer<typeof TweetValidation>>({
     resolver: zodResolver(TweetValidation),
     defaultValues: {
-      tweet: "",
+      twit: "",
       postImg: "",
       accountId: userId,
     },
   });
 
-  function onSubmit(values: z.infer<typeof TweetValidation>) {}
+  const tweetWatch = form.watch("twit");
+
+  async function onSubmit(values: z.infer<typeof TweetValidation>) {
+    console.log("submitting");
+    const postImgBolb = values.postImg;
+    if (postImgBolb) {
+      const isPostImgValid = isBase64Image(postImgBolb);
+      if (isPostImgValid && postImage) {
+        const postImgRes = await startUpload(postImage);
+        if (postImgRes && postImgRes[0].url) {
+          values.postImg = postImgRes[0].url;
+        }
+      }
+    }
+    await createTwit({
+      text: values.twit,
+      postImg: values.postImg,
+      author: userId,
+      path: pathname,
+      communityId: null,
+    });
+    router.push("/");
+  }
   const handlePostImg = (
     e: ChangeEvent<HTMLInputElement>,
     fieldChange: (value: string) => void
@@ -63,7 +94,7 @@ function PostTweet({ userId }: Props) {
   };
   return (
     <div>
-      <div className="p-2 pl-4 pt-4">
+      <div className="p-2 pl-4 pt-4 flex flex-row">
         {isLoaded && userImage && (
           <Image
             src={userImage}
@@ -73,6 +104,9 @@ function PostTweet({ userId }: Props) {
             className="rounded-full"
           />
         )}
+        <span className="px-5 mx-4 h-[26px] text-primary-1 font-semibold tracking-wide border-2 text-xs border-purple-400 rounded-xl border-opacity-50">
+          Everyone
+        </span>
       </div>
       <div className="px-2">
         <Form {...form}>
@@ -82,7 +116,7 @@ function PostTweet({ userId }: Props) {
           >
             <FormField
               control={form.control}
-              name="tweet"
+              name="twit"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -120,20 +154,39 @@ function PostTweet({ userId }: Props) {
                   </FormLabel>
                   <FormControl className="">
                     <Input
+                      ref={PostInputRef}
                       type="file"
                       accept="image/*"
                       placeholder=""
-                      className=""
+                      className="hidden"
                       onChange={(e) => handlePostImg(e, field.onChange)}
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
+            <div className="flex justify-between items-center p-4 border-t-2 border-t-dark-2 mt-4">
+              <div
+                onClick={() => {
+                  if (PostInputRef.current) {
+                    PostInputRef.current.click();
+                  }
+                }}
+              >
+                <TbPhoto
+                  size={40}
+                  className="text-primary-1 hover:bg-dark-2 rounded-full p-2"
+                />
+              </div>
 
-            <Button type="submit" className="mt-12">
-              Submit
-            </Button>
+              <Button
+                type="submit"
+                // disabled={!tweetWatch || form.formState.isSubmitting}
+                className="bg-primary-1 rounded-full px-5 font-semibold tracking-wide  hover:bg-primary-1 hover:opacity-80"
+              >
+                Post
+              </Button>
+            </div>
           </form>
         </Form>
       </div>
