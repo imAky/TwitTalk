@@ -26,45 +26,41 @@ const Bottombar = () => {
   const { userId } = useAuth();
 
   return (
-    <>
-      <section className="bottombar">
-        <div className="bottom-container border-t border-t-red-800 shadow-red-800 bg-blend-darken">
-          {bottombarLinks.map((link) => {
-            const isActive =
-              (pathname.includes(link.route) && link.route.length > 1) ||
-              pathname === link.route;
+    <section className="bottombar">
+      <div className="bottom-container border-t border-t-red-800 shadow-red-800 bg-blend-darken">
+        {bottombarLinks.map((link) => {
+          const isActive =
+            (pathname.includes(link.route) && link.route.length > 1) ||
+            pathname === link.route;
 
-            if (link.route === "/profile")
-              link.route = `${link.route}/${userId}`;
+          if (link.route === "/profile") link.route = `${link.route}/${userId}`;
 
-            return (
-              <div
-                className="hover:bg-dark-4 hover:rounded-full transition-all duration-300"
-                key={link.label}
-              >
-                <div className="py-4 px-4 ">
-                  <Link
-                    href={link.route}
-                    key={link.label}
-                    className={`${isActive && "bg-dark-2"}`}
-                  >
-                    {" "}
-                    {link.icon}
-                  </Link>
-                </div>
+          return (
+            <div
+              className="hover:bg-dark-4 hover:rounded-full transition-all duration-300"
+              key={link.label}
+            >
+              <div className="py-4 px-4 ">
+                <Link
+                  href={link.route}
+                  key={link.label}
+                  className={`${isActive && "bg-dark-2"}`}
+                >
+                  {link.icon}
+                </Link>
               </div>
-            );
-          })}
-        </div>
-        <div className="sm:hidden absolute bottom-20 right-8">
-          <Link href="/compose/tweet">
-            <div className="bg-primary-1  hover:bg-primary-2 rounded-full flex items-center justify-center h-12 w-12">
-              <Feather />
             </div>
-          </Link>
-        </div>
-      </section>
-    </>
+          );
+        })}
+      </div>
+      <div className="sm:hidden absolute bottom-20 right-8">
+        <Link href="/compose/tweet">
+          <div className="bg-primary-1  hover:bg-primary-2 rounded-full flex items-center justify-center h-12 w-12">
+            <Feather />
+          </div>
+        </Link>
+      </div>
+    </section>
   );
 };
 

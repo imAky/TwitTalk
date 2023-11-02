@@ -47,7 +47,7 @@ function PostTweet({ userId }: Props) {
     resolver: zodResolver(TweetValidation),
     defaultValues: {
       twit: "",
-      postImg: "",
+      postImg: undefined,
       accountId: userId,
     },
   });
@@ -55,7 +55,7 @@ function PostTweet({ userId }: Props) {
   const tweetWatch = form.watch("twit");
 
   async function onSubmit(values: z.infer<typeof TweetValidation>) {
-    console.log("submitting");
+    alert("submitting");
     const postImgBolb = values.postImg;
     if (postImgBolb) {
       const isPostImgValid = isBase64Image(postImgBolb);
@@ -181,7 +181,7 @@ function PostTweet({ userId }: Props) {
 
               <Button
                 type="submit"
-                // disabled={!tweetWatch || form.formState.isSubmitting}
+                disabled={!tweetWatch || form.formState.isSubmitting}
                 className="bg-primary-1 rounded-full px-5 font-semibold tracking-wide  hover:bg-primary-1 hover:opacity-80"
               >
                 Post
