@@ -14,16 +14,17 @@ export default async function Home() {
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   const result = await fetchPosts(1, 20);
+  console.log(result);
 
   return (
     <main>
       <Header showBackArrow label="Home" isBorder />
       <section>
-        {result.posts.length === 0 ? (
-          <Link href={"/compose/tweet"}>Post Twit</Link>
+        {result?.posts.length === 0 ? (
+          redirect("compose/tweet")
         ) : (
           <>
-            {result.posts.map((post) => (
+            {result?.posts.map((post) => (
               <TwitCard
                 key={post._id}
                 id={post._id}
