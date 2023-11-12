@@ -43,8 +43,8 @@ export const TwitCard = ({
   isComment,
 }: Props) => {
   return (
-    <article className="flex flex-row w-full border-[1px] border-dark-2 p-4">
-      <div className="h-16 w-16 shrink-0 grow-0 rounded-full relative overflow-hidden">
+    <article className="flex flex-row w-full border-[1px] border-dark-2 p-4 ">
+      <div className="h-12 w-12 shrink-0 grow-0 rounded-full relative overflow-hidden">
         <Link href={`/${author.username}`} className="">
           <Image
             src={author.profile}
@@ -59,32 +59,55 @@ export const TwitCard = ({
       </div>
       <div className="mx-2 flex flex-col w-full">
         <div>
-          <span className="mr-2 font-bold tracking-wider">{author.name}</span>
-          <span className="font-normal text-dark-8 tracking-wide">
-            @{author.username}
-          </span>
+          <Link href={author.username}>
+            <span className="mr-2 font-bold tracking-wider hover:decoration-4 hover:decoration-slate-50 hover:cursor-pointer">
+              {author.name}
+            </span>
+            <span className="font-normal text-dark-8 tracking-wide">
+              @{author.username}
+            </span>
+          </Link>
         </div>
-        <p className="whitespace-normal break-all text-sm tracking-wide my-2">
-          {content}
-        </p>
-        <div>
-          {postImg && (
-            <div className="w-full h-96 relative rounded-xl overflow-hidden my-2">
-              <Image
-                src={postImg}
-                alt="post-Image"
-                fill
-                className="object-cover max-md:object-fill"
-              />
-            </div>
-          )}
-        </div>
+        <Link href={`${author.username}/status/${id}`}>
+          <p className="whitespace-normal break-all text-sm tracking-wide my-2">
+            {content}
+          </p>
+          <div>
+            {postImg && (
+              <div className="w-full h-96 relative rounded-xl overflow-hidden my-2">
+                <Image
+                  src={postImg}
+                  alt="post-Image"
+                  fill
+                  className="object-cover max-md:object-fill"
+                />
+              </div>
+            )}
+          </div>
+        </Link>
         <div className="flex flex-row justify-between my-2 items-start text-dark-8 font-semibold text-lg mx-3">
-          <FaRegComment size={20} />
-          <BiRepost size={20} />
-          <AiOutlineHeart size={20} className="hover:text-light-2" />
-          <BiBarChart size={20} />
-          <GoShare size={20} />
+          <Link href={`${author.username}/status/${id}`}>
+            <FaRegComment
+              size={20}
+              className="hover:text-sky-600 hover:drop-shadow-2xl hover:font-bold transition-all"
+            />
+          </Link>
+          <BiRepost
+            size={24}
+            className="hover:text-emerald-600 hover:drop-shadow-2xl hover:font-bold transition-all"
+          />
+          <AiOutlineHeart
+            size={20}
+            className="hover:text-red-600 hover:drop-shadow-2xl hover:font-bold transition-all"
+          />
+          <BiBarChart
+            size={20}
+            className="hover:text-sky-600 hover:drop-shadow-2xl hover:font-bold transition-all"
+          />
+          <GoShare
+            size={20}
+            className="hover:text-blue-600 hover:drop-shadow-2xl hover:font-bold transition-all"
+          />
         </div>
       </div>
     </article>

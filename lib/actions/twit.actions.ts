@@ -43,9 +43,8 @@ export async function createTwit({
 }
 
 export async function fetchPosts(pageNumber = 1, pageSize = 20) {
+  connectToDB();
   try {
-    connectToDB();
-
     const skipAmount = (pageNumber - 1) * pageSize;
 
     const postsQuery = Twit.find({ parentId: { $in: [null, undefined] } })
@@ -78,5 +77,47 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
     return { posts, isNext };
   } catch (error: any) {
     console.log("Failed to Load Post: Retry");
+  }
+}
+
+export async function fetchTwitById(twitId: string) {
+  connectToDB();
+
+  try {
+    const twit = await Twit.findById(twitId)
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name username profile",
+      })
+      .populate({
+        path: "community",
+        model: Community,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "children",
+        populate: [
+          {
+            path: "author",
+            model: User,
+            select: "_id id name parentId image",
+          },
+          {
+            path: "childrem",
+            model: Twit,
+            populate: {
+              path: "author",
+              model: User,
+              select: "_id id name parentId image",
+            },
+          },
+        ],
+      })
+      .exec();
+    return twit;
+  } catch (error: any) {
+    console.log("Failed to Fetching Twit", error);
+    throw new Error("Unable to Fetch  Twit");
   }
 }

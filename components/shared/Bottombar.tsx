@@ -53,12 +53,8 @@ const Bottombar = () => {
           );
         })}
       </div>
-      <div className="sm:hidden absolute bottom-20 right-8">
-        <Link href="/compose/tweet">
-          <div className="bg-primary-1  hover:bg-primary-2 rounded-full flex items-center justify-center h-12 w-12">
-            <Feather />
-          </div>
-        </Link>
+      <div className="sm:hidden absolute bottom-20 right-8 bg-primary-1  hover:bg-primary-2 rounded-full flex items-center justify-center h-12 w-12">
+        <Feather />
       </div>
     </section>
   );

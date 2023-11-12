@@ -13,11 +13,11 @@
   }
 
   .leftsidebar {
-    @apply ml-0 lg:ml-28  z-20 flex h-screen w-fit flex-col justify-between overflow-auto border-r-2 border-r-dark-2 bg-dark-1 pb-5 pt-0  max-sm:hidden;
+    @apply ml-0 lg:ml-28  z-20 flex h-screen w-fit flex-col justify-between overflow-auto border-r-2 border-r-dark-2 bg-dark-1 pb-5 pt-0  max-sm:hidden sticky top-0;
   }
 
   .rightsidebar {
-    @apply mr-0 lg:mr-28 pt-0 z-20 h-screen w-fit flex-col justify-between overflow-auto border-l-2 border-l-dark-2 bg-dark-1 pb-5 max-md:hidden;
+    @apply mr-0 lg:mr-28 pt-0 z-20 h-screen w-fit flex-col justify-between overflow-auto border-l-2 border-l-dark-2 bg-dark-1 pb-5 max-md:hidden sticky top-0;
   }
 
   .bottombar {
