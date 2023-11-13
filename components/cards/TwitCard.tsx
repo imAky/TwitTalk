@@ -59,7 +59,7 @@ export const TwitCard = ({
       </div>
       <div className="mx-2 flex flex-col w-full">
         <div>
-          <Link href={author.username}>
+          <Link href={`/${author.username}`}>
             <span className="mr-2 font-bold tracking-wider hover:decoration-4 hover:decoration-slate-50 hover:cursor-pointer">
               {author.name}
             </span>
@@ -68,7 +68,7 @@ export const TwitCard = ({
             </span>
           </Link>
         </div>
-        <Link href={`${author.username}/status/${id}`}>
+        <Link href={`/${author.username}/status/${id}`}>
           <p className="whitespace-normal break-all text-sm tracking-wide my-2">
             {content}
           </p>
@@ -86,7 +86,7 @@ export const TwitCard = ({
           </div>
         </Link>
         <div className="flex flex-row justify-between my-2 items-start text-dark-8 font-semibold text-lg mx-3">
-          <Link href={`${author.username}/status/${id}`}>
+          <Link href={`/${author.username}/status/${id}`}>
             <FaRegComment
               size={20}
               className="hover:text-sky-600 hover:drop-shadow-2xl hover:font-bold transition-all"

@@ -6,6 +6,7 @@ import { connectToDB } from "../mongoose";
 import User from "../models/user.models";
 import Twit from "../models/twit.model";
 import Community from "../models/community.model";
+import mongoose from "mongoose";
 
 interface Params {
   text: string;
@@ -28,8 +29,6 @@ export async function createTwit({
       text,
       postImg,
       author,
-      communityId: null,
-      path,
     });
 
     await User.findByIdAndUpdate(author, {
@@ -104,7 +103,7 @@ export async function fetchTwitById(twitId: string) {
             select: "_id id name parentId image",
           },
           {
-            path: "childrem",
+            path: "children",
             model: Twit,
             populate: {
               path: "author",
@@ -119,5 +118,47 @@ export async function fetchTwitById(twitId: string) {
   } catch (error: any) {
     console.log("Failed to Fetching Twit", error);
     throw new Error("Unable to Fetch  Twit");
+  }
+}
+
+export async function addCommentToTwit(
+  twitId: string,
+  commentText: string,
+  commentImg: string | undefined,
+  userId: string,
+  path: string
+) {
+  connectToDB();
+  try {
+    // finding real twit
+    const realTwit = await Twit.findById(twitId);
+
+    if (!realTwit) {
+      throw new Error("Twit Not Found");
+    }
+
+    //Fetch the User information
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User Not Found");
+    }
+
+    // creat new Comment Twit
+    const commentTwit = new Twit({
+      text: commentText,
+      postImg: commentImg,
+      author: userId,
+      parentId: twitId,
+    });
+    console.log(userId);
+
+    const savedCommentTwit = await commentTwit.save();
+
+    realTwit.children.push(savedCommentTwit._id);
+    await realTwit.save();
+    revalidatePath(path);
+  } catch (error: any) {
+    console.error("Error while adding comment", error);
+    throw new Error("Unable to add comment ");
   }
 }

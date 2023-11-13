@@ -14,6 +14,8 @@ export const commentValidation = z.object({
   comment: z
     .string()
     .nonempty()
-    .min(2, { message: "Comment should be at least 1 characters." })
+    .min(1, { message: "Comment should be at least 1 characters." })
     .max(300, { message: "Maximum 200 chaaracters allowed" }),
+  parentId: z.string().nonempty(),
+  postImg: z.string().url().optional(),
 });
