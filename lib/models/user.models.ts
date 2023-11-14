@@ -17,11 +17,9 @@ const userSchema = new mongoose.Schema({
   bio: {
     type: String,
   },
-  location: {
-    type: String,
-  },
-  website: {
-    type: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
   profile: String,
   banner: String,

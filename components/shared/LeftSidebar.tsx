@@ -37,7 +37,6 @@ const LeftSidebar = () => {
               (pathname.includes(link.route) && link.route.length > 1) ||
               pathname === link.route;
 
-            // Ensure you don't mutate the original link.route by creating a new variable
             let linkRoute = link.route;
 
             if (link.route === "/profile") {

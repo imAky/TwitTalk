@@ -24,7 +24,7 @@ export default async function Page({
   const twit = await fetchTwitById(params.id);
 
   return (
-    <section>
+    <section className="relative">
       <Header showBackArrow label="Post" isBorder={false} />
       <TwitCard
         id={twit._id}

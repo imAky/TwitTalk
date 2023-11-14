@@ -6,7 +6,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TbCameraPlus } from "react-icons/tb";
 import { isBase64Image } from "@/lib/utils";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 
 import { useUploadThing } from "@/lib/uploadthing";
 

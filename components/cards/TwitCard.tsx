@@ -7,6 +7,7 @@ import { BiRepost, BiBarChart } from "react-icons/bi";
 import { AiOutlineHeart } from "react-icons/ai";
 import { GoShare } from "react-icons/go";
 import { Ri24HoursFill } from "react-icons/ri";
+import { fetchUser } from "@/lib/actions/user.actions";
 
 interface Props {
   id: string;
@@ -30,7 +31,7 @@ interface Props {
   isComment?: boolean;
 }
 
-export const TwitCard = ({
+export const TwitCard = async ({
   id,
   currentUserId,
   parentId,
@@ -42,6 +43,11 @@ export const TwitCard = ({
   comments,
   isComment,
 }: Props) => {
+  if (!author.profile || !author.username) {
+    const userData = await fetchUser(author.id);
+    author.profile = userData?.profile;
+    author.username = userData?.username;
+  }
   return (
     <article className="flex flex-row w-full border-[1px] border-dark-2 p-4 ">
       <div className="h-12 w-12 shrink-0 grow-0 rounded-full relative overflow-hidden">

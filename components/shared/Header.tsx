@@ -7,9 +7,15 @@ interface HeaderProps {
   showBackArrow?: boolean;
   label: string;
   isBorder?: boolean;
+  isSticky?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ showBackArrow, label, isBorder }) => {
+const Header: React.FC<HeaderProps> = ({
+  showBackArrow,
+  label,
+  isBorder,
+  isSticky,
+}) => {
   const router = useRouter();
 
   const handleBack = useCallback(() => {
@@ -17,7 +23,11 @@ const Header: React.FC<HeaderProps> = ({ showBackArrow, label, isBorder }) => {
   }, [router]);
 
   return (
-    <div className={`${isBorder && "border-b-2 border-b-dark-2"} p-3`}>
+    <div
+      className={`${isBorder && "border-b-2 border-b-dark-2"} ${
+        isSticky && "sticky top-0 z-50"
+      } p-3 bg-dark-1 bg-opacity-50 bg-blur-md`}
+    >
       <div className="flex flex-row items-center gap-3">
         {showBackArrow && (
           <BiArrowBack
