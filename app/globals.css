@@ -13,7 +13,7 @@
   }
 
   .leftsidebar {
-    @apply ml-0 lg:ml-28  z-20 flex h-screen w-fit flex-col justify-between overflow-auto border-r-2 border-r-dark-2 bg-dark-1 pb-5 pt-0  max-sm:hidden sticky top-0;
+    @apply ml-0 z-20 lg:ml-28  flex h-screen w-fit flex-col justify-between overflow-auto border-r-2 border-r-dark-2 bg-dark-1 pb-5 pt-0  max-sm:hidden sticky top-0;
   }
 
   .rightsidebar {

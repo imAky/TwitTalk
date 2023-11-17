@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { SignOutButton, SignedIn, UserProfile, useAuth } from "@clerk/nextjs";
 import UserCard from "./UserCard";
@@ -12,18 +12,46 @@ import { useUser } from "@clerk/nextjs";
 import { useClerk } from "@clerk/clerk-react";
 import BlackTriangle from "./BlackTraingle";
 import Feather from "./Feather";
+import { fetchUser } from "@/lib/actions/user.actions";
+
+interface User {
+  username: string;
+  name: string;
+  id: string;
+  profile: string;
+}
 
 const LeftSidebar = () => {
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isToggle, setToggle] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { user, isSignedIn, isLoaded } = useUser();
-  const { signOut } = useClerk();
-  const fullName = `${user?.firstName} ${user?.lastName}`;
-  const userImage = user?.imageUrl;
-  const userName = user?.username;
-
   const { userId } = useAuth();
+  const { signOut } = useClerk();
+  // const { user, isSignedIn, isLoaded } = useUser();
+
+  // const fullName = `${user?.firstName} ${user?.lastName}`;
+  // const userImage = user?.imageUrl;
+  // const userName = user?.username;
+
+  useEffect(() => {
+    async function getUser() {
+      try {
+        if (userId) {
+          const userData = await fetchUser(userId);
+          console.log(userData);
+          setUserInfo(userData);
+        }
+      } catch (error: any) {
+        console.log(`Failed to Fetch User Data ${error.message}`);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    getUser();
+  }, []);
 
   return (
     <>
@@ -40,8 +68,7 @@ const LeftSidebar = () => {
             let linkRoute = link.route;
 
             if (link.route === "/profile") {
-              // Assuming userId is defined elsewhere in your component
-              linkRoute = `${link.route}/${userId}`;
+              linkRoute = `/${userInfo?.username}`;
             }
 
             return (
@@ -73,10 +100,10 @@ const LeftSidebar = () => {
           </div>
         </div>
 
-        {isSignedIn && isLoaded && (
+        {
           <div className="group">
             {isToggle && (
-              <div className="absolute ml-4 bg-dark-1 bottom-24 rounded-lg border-1 border-red-800 shadow shadow-red-800 bg-blend-darker">
+              <div className="absolute ml-4 w-96 bg-dark-1 bottom-24 rounded-lg border-1 border-red-800 shadow shadow-red-800 bg-blend-darker mr-4">
                 <div className=" hover:bg-dark-2 rounded-md transition-all duration-300">
                   <div
                     className="pl-6 pt-5 pb-1 mr-24 font-semibold tracking-wide font-light-2 leading-8"
@@ -95,42 +122,46 @@ const LeftSidebar = () => {
                   }}
                 >
                   <p className="pl-6 pb-5 pt-1 mr-24 font-semibold tracking-wide font-light-2 leading-8">
-                    Log out @{userName}
+                    Log out @{userInfo?.username}
                   </p>
                 </div>
 
                 <BlackTriangle />
               </div>
             )}
-            <div
-              className="group flex items-center px-4 bg-dark-1 rounded-full lg:hover:bg-dark-2 cursor-pointer"
-              onClick={() => {
-                setToggle(!isToggle);
-              }}
-            >
-              <div className="cursor-pointer rounded-full py-0">
-                {userImage && (
-                  <Image
-                    src={userImage}
-                    alt="userImage"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                )}
-              </div>
-              <div className="flex flex-col p-2 items-center pl-3 max-lg:hidden">
-                <div className="font-bold tracking-wide font-light-2">
-                  {fullName}
+
+            {isLoading ? (
+              <p>Loading...</p>
+            ) : (
+              <div
+                className="group flex items-center px-4 bg-dark-1 rounded-full lg:hover:bg-dark-2 cursor-pointer py-2"
+                onClick={() => {
+                  setToggle(!isToggle);
+                }}
+              >
+                <div className="cursor-pointer h-12 w-12 relative rounded-full py-0">
+                  {userInfo?.profile && (
+                    <Image
+                      src={userInfo?.profile}
+                      alt="userImage"
+                      fill
+                      className="rounded-full object-cover"
+                    />
+                  )}
                 </div>
-                <div className=" text-dark-3 font-medium">{`@${userName}`}</div>
+                <div className="flex flex-col p-2 items-center pl-3 max-lg:hidden">
+                  <div className="font-bold tracking-wide font-light-2">
+                    {userInfo?.name}
+                  </div>
+                  <div className=" text-dark-3 font-medium">{`@${userInfo?.username}`}</div>
+                </div>
+                <div className="ml-auto tx-2xl font-bold tracking-widest max-lg:hidden">
+                  ...
+                </div>
               </div>
-              <div className="ml-auto tx-2xl font-bold tracking-widest max-lg:hidden">
-                ...
-              </div>
-            </div>
+            )}
           </div>
-        )}
+        }
       </section>
     </>
   );
