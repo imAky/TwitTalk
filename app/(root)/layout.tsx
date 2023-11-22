@@ -34,12 +34,14 @@ export default function RootLayout({
       }}
     >
       <html lang="en">
-        <body className={`${roboto.variable} font-robo bg-dark-1 text-light-1`}>
+        <body
+          className={`${roboto.variable} font-robo bg-dark-1 text-light-1 h-screen`}
+        >
           <main className="flex flex-row">
             <LeftSidebar />
 
-            <section className="main-container flex-1">
-              <div className="w-full max-w-4xl">{children}</div>
+            <section className="main-container flex-1 z-10">
+              <div className="">{children}</div>
             </section>
             <RightSidebar />
           </main>

@@ -17,6 +17,9 @@ const userSchema = new mongoose.Schema({
   bio: {
     type: String,
   },
+  location: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -37,6 +40,23 @@ const userSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Community",
+    },
+  ],
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  notifications: [
+    {
+      type: String,
     },
   ],
 });

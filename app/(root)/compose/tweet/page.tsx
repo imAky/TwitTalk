@@ -18,7 +18,7 @@ async function Page() {
         <Header showBackArrow label="" />
       </div>
 
-      <PostTweet userId={userInfo._id} />
+      <PostTweet userId={userInfo._id} currentUserImg={userInfo.profile} />
     </div>
   );
 }

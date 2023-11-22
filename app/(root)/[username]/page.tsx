@@ -3,8 +3,10 @@ import Header from "@/components/shared/Header";
 import { findUserByUsername } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { FaCalendarDays } from "react-icons/fa6";
+import { format } from "date-fns";
 
 export default async function Profile({
   params,
@@ -12,12 +14,15 @@ export default async function Profile({
   params: { username: string };
 }) {
   const userInfoAll = await findUserByUsername(params.username);
-  if (!userInfoAll) redirect("/");
+  if (!userInfoAll?.onboarded) redirect("/onboarding");
+
+  const formattedCreatedAt = format(
+    new Date(userInfoAll.createdAt),
+    "dd MMMM yyyy"
+  );
 
   const user = await currentUser();
-  if (!user) redirect("/sign-n");
-
-  console.log(userInfoAll);
+  if (!user) redirect("/sign-in");
 
   return (
     <section className="">
@@ -60,32 +65,52 @@ export default async function Profile({
       </div>
 
       <p className="m-2 break-all p-2 mx-4 leading-6 text-slate-100 ">
-        👨‍💻Full Stack Developer 💖 Keep interest in 💝 JavaScript 🐍Python 🎮 C++
-        ✨ Git 🌐 Node JS 🔥 React 🤖 AI & ML 💞 Love to share what I learn💯.
+        {userInfoAll.bio}
       </p>
 
       <p className="flex gap-2 items-center ml-8 text-sm">
+        <span className="text-sm text-gray-500">{userInfoAll.location}</span>
         <FaCalendarDays className="text-sm text-gray-500" />
-        <span className="text-sm text-gray-500"> Joined December 2020</span>
+        <span className="text-sm text-gray-500">
+          {" "}
+          Joined {formattedCreatedAt}
+        </span>
       </p>
 
       <div className="flex gap-4 ml-6 my-4">
-        <p className="hover:underline decoration-gray-500">
-          <span className="font-semibold">46</span>{" "}
-          <span className="text-sm text-gray-500 text-semibold tracking-wide">
-            Following
-          </span>
-        </p>
-        <p className="hover:underline decoration-gray-500">
-          <span className="font-semibold">9</span>{" "}
-          <span className="text-sm text-gray-500 text-semibold tracking-wide">
-            Followers
-          </span>
-        </p>
+        <Link href={`/${params.username}/following`}>
+          <p className="hover:underline decoration-gray-500">
+            <span className="font-semibold">
+              {userInfoAll.following.length}
+            </span>{" "}
+            <span className="text-sm text-gray-500 text-semibold tracking-wide">
+              Following
+            </span>
+          </p>
+        </Link>
+        <Link href={`/${params.username}/followers`}>
+          <p className="hover:underline decoration-gray-500">
+            <span className="font-semibold">
+              {userInfoAll.followers.length}
+            </span>{" "}
+            <span className="text-sm text-gray-500 text-semibold tracking-wide">
+              Followers
+            </span>
+          </p>
+        </Link>
       </div>
       <div className="">
         {userInfoAll.twit.length == 0 ? (
-          <div>No Comment</div>
+          <div className="flex items-center justify-center py-6 border-t-2 border-t-dark-2 tracking-wide font-semibold ">
+            No Content
+            <Link
+              href="/compose/tweet"
+              className="cursor-pointer px-2 text-sky-500"
+            >
+              Click
+            </Link>
+            to Add Post
+          </div>
         ) : (
           userInfoAll.twit.map((Item: any) => (
             <TwitCard

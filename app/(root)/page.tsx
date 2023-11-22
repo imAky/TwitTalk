@@ -14,14 +14,14 @@ export default async function Home() {
   if (!userInfo?.onboarded) redirect("/onboarding");
 
   const result = await fetchPosts(1, 20);
-  console.log(result);
+  console.log("checking the post : ", result);
 
   return (
     <main>
       <Header showBackArrow label="Home" isBorder />
       <section>
         {result?.posts.length === 0 ? (
-          redirect("compose/tweet")
+          redirect("/compose/tweet")
         ) : (
           <>
             {result?.posts.map((post) => (

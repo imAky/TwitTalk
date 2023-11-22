@@ -28,6 +28,18 @@ const twitSchema = new mongoose.Schema({
       ref: "Twit",
     },
   ],
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  views: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 const Twit = mongoose.models.Twit || mongoose.model("Twit", twitSchema);

@@ -37,7 +37,6 @@ interface Props {
     image: string;
     banner: string;
     location: string;
-    website: string;
   };
   btnTitle: string;
 }
@@ -60,7 +59,6 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       name: user.name || "",
       bio: user.bio || "",
       location: user.location || "",
-      website: user.website,
     },
   });
 
@@ -69,6 +67,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     const bannerBlob = values.banner;
 
     // Check if the profile image is a valid base64 image
+
     const isProfileImageValid = isBase64Image(profileBlob);
 
     // Check if the banner image is a valid base64 image
@@ -94,21 +93,16 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
     await updateUser({
       userId: user.id,
-      username: values.username,
-      name: values.name,
-      bio: values.bio,
-      location: values.location,
-      profile: values.profile,
-      banner: values.banner,
-      website: values.website,
+      username: values.username || user?.username,
+      name: values.name || user?.name,
+      bio: values.bio || user?.bio,
+      location: values.location || user?.location,
+      profile: values.profile || user?.image,
+      banner: values.banner || user?.banner,
       path: pathname,
     });
 
-    if (pathname === "/profile/edit") {
-      router.back();
-    } else {
-      router.push("/");
-    }
+    router.back();
   };
   const handleBannerImage = (
     e: ChangeEvent<HTMLInputElement>,
@@ -334,25 +328,6 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
               <FormItem className="px-6 relative pb-5 ">
                 <FormLabel className="absolute top-1 left-9  text-dark-3 text-xs font-light">
                   Location
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    className="h-16 pt-6 text-lg font-medium border-2 focus:border:1 border-dark-6 bg-dark-1 ring-offset-sky-500 focus-visible:ring-1 focus-visible:ring-sky-500 focus-visible:ring-offset-1"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="website"
-            render={({ field }) => (
-              <FormItem className="px-6 relative pb-5">
-                <FormLabel className="absolute top-1 left-9  text-dark-3 text-xs font-light">
-                  Website
                 </FormLabel>
                 <FormControl>
                   <Input

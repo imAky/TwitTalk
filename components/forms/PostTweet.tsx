@@ -33,9 +33,10 @@ import { createTwit } from "@/lib/actions/twit.actions";
 
 interface Props {
   userId: string;
+  currentUserImg: string;
 }
 
-function PostTweet({ userId }: Props) {
+function PostTweet({ userId, currentUserImg }: Props) {
   const [postImage, setPostImage] = useState<File[]>();
   const PostInputRef = useRef<HTMLInputElement | null>(null);
   const pathname = usePathname();
@@ -55,7 +56,6 @@ function PostTweet({ userId }: Props) {
   const tweetWatch = form.watch("twit");
 
   async function onSubmit(values: z.infer<typeof TweetValidation>) {
-    alert("submitting");
     const postImgBolb = values.postImg;
     if (postImgBolb) {
       const isPostImgValid = isBase64Image(postImgBolb);
@@ -95,15 +95,14 @@ function PostTweet({ userId }: Props) {
   return (
     <div>
       <div className="p-2 pl-4 pt-4 flex flex-row">
-        {isLoaded && userImage && (
+        <div className="w-12 h-12 relative rounded-full mx-2">
           <Image
-            src={userImage}
+            src={currentUserImg}
             alt="userImage"
-            width={40}
-            height={40}
-            className="rounded-full"
+            fill
+            className="rounded-full object-cover"
           />
-        )}
+        </div>
         <span className="px-5 mx-4 h-[26px] text-primary-1 font-semibold tracking-wide border-2 text-xs border-purple-400 rounded-xl border-opacity-50">
           Everyone
         </span>

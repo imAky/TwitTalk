@@ -3,9 +3,8 @@
 @tailwind utilities;
 
 @layer components {
-  /* main */
   .main-cointainer {
-    @apply flex min-h-screen flex-1 flex-col items-center bg-dark-1 px-6 pb-10 pt-28 max-md:pb-32 sm:px-10;
+    @apply flex min-h-screen  flex-1 flex-col items-center bg-dark-1 px-6 pb-10 pt-28 max-md:pb-32 sm:px-10 overflow-y-auto shrink-0;
   }
 
   .head-text {
@@ -13,11 +12,11 @@
   }
 
   .leftsidebar {
-    @apply ml-0 z-20 lg:ml-28  flex h-screen w-fit flex-col justify-between overflow-auto border-r-2 border-r-dark-2 bg-dark-1 pb-5 pt-0  max-sm:hidden sticky top-0;
+    @apply lg:w-1/5 ml-0 z-50  lg:ml-28  flex h-screen  flex-col justify-between overflow-auto border-r-2 border-r-dark-2 bg-dark-1 pb-5 pt-0  max-sm:hidden sticky top-0;
   }
 
   .rightsidebar {
-    @apply mr-0 lg:mr-28 pt-0 z-20 h-screen w-fit flex-col justify-between overflow-auto border-l-2 border-l-dark-2 bg-dark-1 pb-5 max-md:hidden sticky top-0;
+    @apply mr-0 lg:mr-28 pt-0 z-20 h-screen  flex-col justify-between overflow-auto border-l-2 border-l-dark-2 bg-dark-1 pb-5 max-md:hidden sticky top-0;
   }
 
   .bottombar {

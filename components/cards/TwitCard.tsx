@@ -8,6 +8,7 @@ import { AiOutlineHeart } from "react-icons/ai";
 import { GoShare } from "react-icons/go";
 import { Ri24HoursFill } from "react-icons/ri";
 import { fetchUser } from "@/lib/actions/user.actions";
+import { MdDeleteForever } from "react-icons/md";
 
 interface Props {
   id: string;
@@ -43,11 +44,15 @@ export const TwitCard = async ({
   comments,
   isComment,
 }: Props) => {
-  if (!author.profile || !author.username) {
+  if (!author?.profile || !author?.username) {
     const userData = await fetchUser(author.id);
-    author.profile = userData?.profile;
-    author.username = userData?.username;
+    author.profile = userData.profile;
+    author.username = userData.username;
   }
+
+  const handleDelete = async () => {
+    alert("You got clicked");
+  };
   return (
     <article className="flex flex-row w-full border-[1px] border-dark-2 p-4 ">
       <div className="h-12 w-12 shrink-0 grow-0 rounded-full relative overflow-hidden">
@@ -64,7 +69,7 @@ export const TwitCard = async ({
         </Link>
       </div>
       <div className="mx-2 flex flex-col w-full">
-        <div>
+        <div className="flex flex-row justify-between">
           <Link href={`/${author.username}`}>
             <span className="mr-2 font-bold tracking-wider hover:decoration-4 hover:decoration-slate-50 hover:cursor-pointer">
               {author.name}
@@ -73,6 +78,14 @@ export const TwitCard = async ({
               @{author.username}
             </span>
           </Link>
+          <div>
+            <button
+              // onClick={handleDelete}
+              className="font-extrabold text-gray-500 tracking-widest rounded-full hover:bg-gray-700 p-1"
+            >
+              <MdDeleteForever size={16} />
+            </button>
+          </div>
         </div>
         <Link href={`/${author.username}/status/${id}`}>
           <p className="whitespace-normal break-all text-sm tracking-wide my-2">
