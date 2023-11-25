@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { useRef } from "react";
 import { useUploadThing } from "@/lib/uploadthing";
+
 import {
   Form,
   FormControl,
@@ -30,6 +31,7 @@ import { BiArrowBack } from "react-icons/bi";
 import TextareaAutosize from "./TextareaAutosize";
 import { isBase64Image } from "@/lib/utils";
 import { createTwit } from "@/lib/actions/twit.actions";
+import AnimateSVG from "../shared/AnimatesSVG";
 
 interface Props {
   userId: string;
@@ -44,6 +46,7 @@ function PostTweet({ userId, currentUserImg }: Props) {
   const { startUpload } = useUploadThing("media");
   const { user, isLoaded } = useUser();
   const userImage = user?.imageUrl;
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof TweetValidation>>({
     resolver: zodResolver(TweetValidation),
     defaultValues: {
@@ -56,24 +59,31 @@ function PostTweet({ userId, currentUserImg }: Props) {
   const tweetWatch = form.watch("twit");
 
   async function onSubmit(values: z.infer<typeof TweetValidation>) {
-    const postImgBolb = values.postImg;
-    if (postImgBolb) {
-      const isPostImgValid = isBase64Image(postImgBolb);
-      if (isPostImgValid && postImage) {
-        const postImgRes = await startUpload(postImage);
-        if (postImgRes && postImgRes[0].url) {
-          values.postImg = postImgRes[0].url;
+    setLoading(true);
+    try {
+      const postImgBolb = values.postImg;
+      if (postImgBolb) {
+        const isPostImgValid = isBase64Image(postImgBolb);
+        if (isPostImgValid && postImage) {
+          const postImgRes = await startUpload(postImage);
+          if (postImgRes && postImgRes[0].url) {
+            values.postImg = postImgRes[0].url;
+          }
         }
       }
+      await createTwit({
+        text: values.twit,
+        postImg: values.postImg,
+        author: userId,
+        path: pathname,
+        communityId: null,
+      });
+    } catch (err: any) {
+      console.log(`Error on Posting Tweet ${err.message}`);
+    } finally {
+      setLoading(false);
+      router.push("/");
     }
-    await createTwit({
-      text: values.twit,
-      postImg: values.postImg,
-      author: userId,
-      path: pathname,
-      communityId: null,
-    });
-    router.push("/");
   }
   const handlePostImg = (
     e: ChangeEvent<HTMLInputElement>,
@@ -183,7 +193,11 @@ function PostTweet({ userId, currentUserImg }: Props) {
                 disabled={!tweetWatch || form.formState.isSubmitting}
                 className="bg-primary-1 rounded-full px-5 font-semibold tracking-wide  hover:bg-primary-1 hover:opacity-80"
               >
-                Post
+                {loading ? (
+                  <AnimateSVG width={28} height={28} swidth={12} />
+                ) : (
+                  "Post"
+                )}
               </Button>
             </div>
           </form>

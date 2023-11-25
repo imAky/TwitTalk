@@ -1,12 +1,13 @@
-import { TwitCard } from "@/components/cards/TwitCard";
+"use client";
+import TwitCard from "@/components/cards/TwitCard";
 import Header from "@/components/shared/Header";
 import { findUserByUsername } from "@/lib/actions/user.actions";
+import { formatTimeDifference } from "@/lib/utils";
 import { currentUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { FaCalendarDays } from "react-icons/fa6";
-import { format } from "date-fns";
 
 export default async function Profile({
   params,
@@ -16,10 +17,7 @@ export default async function Profile({
   const userInfoAll = await findUserByUsername(params.username);
   if (!userInfoAll?.onboarded) redirect("/onboarding");
 
-  const formattedCreatedAt = format(
-    new Date(userInfoAll.createdAt),
-    "dd MMMM yyyy"
-  );
+  const formattedCreatedAt = formatTimeDifference(userInfoAll.createdAt, true);
 
   const user = await currentUser();
   if (!user) redirect("/sign-in");
@@ -116,14 +114,17 @@ export default async function Profile({
             <TwitCard
               key={Item._id}
               id={Item._id}
-              currentUserId={user.id}
+              currentUserId={userInfoAll?._id}
               parentId={Item.parentId}
               content={Item.text}
               postImg={Item.postImg}
-              author={userInfoAll}
               community={Item.community}
               createdAt={Item.createdAt}
               comments={Item.children}
+              cardname={userInfoAll.name}
+              cardusername={userInfoAll.username}
+              carduserId={userInfoAll.id}
+              cardprofile={userInfoAll.profile}
             />
           ))
         )}

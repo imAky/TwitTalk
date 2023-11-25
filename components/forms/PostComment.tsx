@@ -29,6 +29,7 @@ import { commentValidation } from "@/lib/validations/twit";
 import TextareaAutosize from "./TextareaAutosize";
 import { isBase64Image } from "@/lib/utils";
 import { addCommentToTwit } from "@/lib/actions/twit.actions";
+import AnimateSVG from "../shared/AnimatesSVG";
 
 interface Props {
   twitId: string;
@@ -38,6 +39,7 @@ interface Props {
 
 function PostComment({ twitId, currentUserImg, currentUserId }: Props) {
   const [postImage, setPostImage] = useState<File[]>();
+  const [loading, setLoading] = useState(false);
   const PostInputRef = useRef<HTMLInputElement | null>(null);
   const pathname = usePathname();
   const { startUpload } = useUploadThing("media");
@@ -62,26 +64,32 @@ function PostComment({ twitId, currentUserImg, currentUserId }: Props) {
   };
 
   async function onSubmit(values: z.infer<typeof commentValidation>) {
-    alert("submitting");
-    const postImgBolb = values.postImg;
-    if (postImgBolb) {
-      const isPostImgValid = isBase64Image(postImgBolb);
-      if (isPostImgValid && postImage) {
-        const postImgRes = await startUpload(postImage);
-        if (postImgRes && postImgRes[0].url) {
-          values.postImg = postImgRes[0].url;
+    setLoading(true);
+    try {
+      const postImgBolb = values.postImg;
+      if (postImgBolb) {
+        const isPostImgValid = isBase64Image(postImgBolb);
+        if (isPostImgValid && postImage) {
+          const postImgRes = await startUpload(postImage);
+          if (postImgRes && postImgRes[0].url) {
+            values.postImg = postImgRes[0].url;
+          }
         }
       }
+      await addCommentToTwit(
+        twitId,
+        values.comment,
+        values.postImg,
+        currentUserId,
+        pathname
+      );
+    } catch (err: any) {
+      console.log(`Error on Posting Tweet ${err.message}`);
+    } finally {
+      setLoading(false);
+      form.reset();
+      handleClearPostImage();
     }
-    await addCommentToTwit(
-      twitId,
-      values.comment,
-      values.postImg,
-      currentUserId,
-      pathname
-    );
-    form.reset();
-    handleClearPostImage();
   }
   const handlePostImg = (
     e: ChangeEvent<HTMLInputElement>,
@@ -198,7 +206,11 @@ function PostComment({ twitId, currentUserImg, currentUserId }: Props) {
                 disabled={!commnetWatch || form.formState.isSubmitting}
                 className="bg-primary-1 rounded-full px-4 font-semibold tracking-wide  hover:bg-primary-1 hover:opacity-80"
               >
-                Reply
+                {loading ? (
+                  <AnimateSVG width={28} height={28} swidth={12} />
+                ) : (
+                  "Reply"
+                )}
               </Button>
             </div>
           </form>

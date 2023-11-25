@@ -1,4 +1,5 @@
-import { TwitCard } from "@/components/cards/TwitCard";
+"use client";
+import TwitCard from "@/components/cards/TwitCard";
 import PostComment from "@/components/forms/PostComment";
 import PostTweet from "@/components/forms/PostTweet";
 import Header from "@/components/shared/Header";
@@ -28,14 +29,17 @@ export default async function Page({
       <Header showBackArrow label="Post" isBorder={false} />
       <TwitCard
         id={twit._id}
-        currentUserId={user.id}
+        currentUserId={userInfo?._id}
         parentId={twit.parentId}
         content={twit.text}
         postImg={twit.postImg}
-        author={twit.author}
         community={twit.community}
         createdAt={twit.createdAt}
         comments={twit.children}
+        cardname={twit?.author.name}
+        cardusername={twit?.author.username}
+        carduserId={twit.author.id}
+        cardprofile={twit?.author.profile}
       />
 
       <PostComment
@@ -52,14 +56,17 @@ export default async function Page({
             <TwitCard
               key={childItem._id}
               id={childItem._id}
-              currentUserId={user.id}
+              currentUserId={userInfo?._id}
               parentId={childItem.parentId}
               content={childItem.text}
               postImg={childItem.postImg}
-              author={childItem.author}
               community={childItem.community}
               createdAt={childItem.createdAt}
               comments={childItem.children}
+              cardname={childItem?.author.name}
+              cardusername={childItem?.author.username}
+              carduserId={childItem?.author.id}
+              cardprofile={childItem?.author.profile}
             />
           ))
         )}

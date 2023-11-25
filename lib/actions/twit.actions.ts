@@ -1,5 +1,11 @@
 "use server";
 
+import {
+  TwitDocument,
+  UserDocument,
+  CommunityDocument,
+} from "../validations/types";
+
 import { revalidatePath } from "next/cache";
 
 import { connectToDB } from "../mongoose";
@@ -41,8 +47,15 @@ export async function createTwit({
   }
 }
 
-export async function fetchPosts(pageNumber = 1, pageSize = 20) {
+// Adjust the path accordingly
+
+export const fetchAllPosts = async (
+  pageNumber: number,
+  pageSize: number
+): Promise<{ postData: TwitDocument[]; totalPostCount: number }> => {
+  // Connect to your database or perform necessary setup
   connectToDB();
+
   try {
     const skipAmount = (pageNumber - 1) * pageSize;
 
@@ -52,32 +65,34 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
       .limit(pageSize)
       .populate({
         path: "author",
-        model: User,
+        model: "User" as any, // Casting 'User' as any to avoid TS error, ensure it matches your Mongoose model name
       })
       .populate({
         path: "community",
-        model: Community,
+        model: "Community" as any, // Casting 'Community' as any to avoid TS error, ensure it matches your Mongoose model name
       })
       .populate({
         path: "children",
         populate: {
           path: "author",
-          model: User,
+          model: "User" as any, // Casting 'User' as any to avoid TS error, ensure it matches your Mongoose model name
           select: "_id name parentId image",
         },
       });
-    const totalPostsCount = await Twit.countDocuments({
+
+    const totalPostCount = await Twit.countDocuments({
       parentId: { $in: [null, undefined] },
     });
 
-    const posts = await postsQuery.exec();
-
-    const isNext = totalPostsCount > skipAmount + posts.length;
-    return { posts, isNext };
+    // Executing query and converting results to TwitDocument[]
+    const postData: TwitDocument[] =
+      (await postsQuery.exec()) as TwitDocument[];
+    return { postData, totalPostCount };
   } catch (error: any) {
-    console.log("Failed to Load Post: Retry");
+    console.log("Error fetching posts", error);
+    throw new Error(`Error: ${error.message}`);
   }
-}
+};
 
 export async function fetchTwitById(twitId: string) {
   connectToDB();
@@ -162,3 +177,79 @@ export async function addCommentToTwit(
     throw new Error("Unable to add comment ");
   }
 }
+
+export async function DeletePostById(twitId: string, pathname: string) {
+  try {
+    const deletedPost = await Twit.findByIdAndDelete(twitId);
+    if (!deletedPost) {
+      console.log("Post Not Found");
+    }
+  } catch (err: any) {
+    console.log(`Error in Deleting Post : ${err.message}`);
+  } finally {
+    revalidatePath(pathname);
+  }
+}
+
+export async function AddOrRemoveLike(
+  id: string,
+  currentUserId: string | undefined,
+  pathname: string,
+  Initial: Boolean
+) {
+  connectToDB();
+  try {
+    let twit = await Twit.findById(id);
+    let likeStatus = false; // Default: user hasn't liked the twit yet
+    let totalLikes; // Total number of likes
+    let likesList; // List of users who liked the twit
+    let totalComment = 0;
+
+    if (Initial && currentUserId) {
+      const userIndex = twit.likes.indexOf(currentUserId);
+      if (userIndex == -1) {
+        likeStatus = false;
+      } else {
+        likeStatus = true;
+      }
+    } else if (currentUserId) {
+      const userIndex = twit.likes.indexOf(currentUserId);
+      if (userIndex === -1) {
+        // User hasn't liked the twit, add the like
+        twit.likes.push(currentUserId);
+        likeStatus = true; // Set like status to true as user liked the twit
+      } else {
+        // User already liked the twit, remove the like
+        twit.likes.splice(userIndex, 1);
+        likeStatus = true;
+      }
+      // Save the updated twit
+      twit = await twit.save();
+    }
+    totalLikes = twit.likes.length;
+    likesList = twit.likes;
+    totalComment = twit.children.length;
+
+    revalidatePath(pathname); // Revalidate path outside the try block
+    console.log(
+      likeStatus,
+      "and",
+      totalLikes,
+      "and",
+      likesList,
+      "and",
+      totalComment
+    );
+    return {
+      likeStatus,
+      totalLikes,
+      likesList,
+      totalComment,
+    };
+  } catch (err) {
+    console.error("Error adding/removing like", err);
+    // throw new Error("Failed to add/remove like");
+  }
+}
+
+//
