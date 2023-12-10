@@ -36,40 +36,36 @@ export default function Home() {
   };
 
   const fetchPostData = async () => {
-    if (hasMorePost === false || loading === true) return;
-    setLoading(true);
+    // if (hasMorePost === false || loading === true) return;
+    // setLoading(true);
 
     try {
       const PAGE_SIZE = 3;
+      const nextPage = page + 1;
 
-      setPage((prevPage) => {
-        const nextPage = prevPage + 1;
-        fetchAllPosts(nextPage, PAGE_SIZE)
-          .then(({ postData, totalPostCount }) => {
-            if (postData.length === 0) {
-              setMorePost(false);
-            }
+      const { postData, totalPostCount } = await fetchAllPosts(1, 20);
+      console.log("Receivng Post", postData);
+      if (postData.length === 0) {
+        setMorePost(false);
+      }
 
-            setResult((prevPosts) => {
-              const existingPostsIds = prevPosts.map((post) => post._id);
-
-              const uniqueNewPots = postData.filter(
-                (newPost) => !existingPostsIds.includes(newPost._id)
-              );
-
-              return [...prevPosts, ...uniqueNewPots];
-            });
-          })
-          .catch((error: any) => {
-            console.log("Error fetching users:", error);
-          });
-
-        return nextPage;
+      setResult((prevPosts) => {
+        const existingPostsIds = prevPosts.map((post) => post._id);
+        const uniqueNewPots = postData.filter(
+          (newPost) => !existingPostsIds.includes(newPost._id)
+        );
+        const updatedPosts = [...prevPosts, ...uniqueNewPots];
+        console.log("Updated Posts:", updatedPosts);
+        return updatedPosts;
       });
+
+      setResult(postData);
+
+      setPage(nextPage); // Update the page state here if needed
     } catch (error) {
-      console.log("Error fetching users :", error);
+      console.log("Error fetching posts:", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -106,9 +102,7 @@ export default function Home() {
       <Header showBackArrow label="Home" isBorder />
 
       <section>
-        {result?.length === 0 ? (
-          redirect("/compose/tweet")
-        ) : (
+        {
           <>
             {result?.map((post) => (
               <TwitCard
@@ -127,7 +121,7 @@ export default function Home() {
               />
             ))}
           </>
-        )}
+        }
       </section>
       <div ref={loader} style={{ height: "10px", background: "transparent" }}>
         {loading && <p>Loading...</p>}

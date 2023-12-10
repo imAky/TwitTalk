@@ -52,7 +52,7 @@ export async function createTwit({
 export const fetchAllPosts = async (
   pageNumber: number,
   pageSize: number
-): Promise<{ postData: TwitDocument[]; totalPostCount: number }> => {
+): Promise<{ postData: any[]; totalPostCount: number }> => {
   // Connect to your database or perform necessary setup
   connectToDB();
 
@@ -85,8 +85,8 @@ export const fetchAllPosts = async (
     });
 
     // Executing query and converting results to TwitDocument[]
-    const postData: TwitDocument[] =
-      (await postsQuery.exec()) as TwitDocument[];
+    const postData: any[] = await postsQuery.exec();
+    console.log("backing ", postData, "total", totalPostCount);
     return { postData, totalPostCount };
   } catch (error: any) {
     console.log("Error fetching posts", error);
